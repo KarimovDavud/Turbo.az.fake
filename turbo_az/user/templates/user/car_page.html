@@ -1,0 +1,108 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Detail</title>
+    <link rel="stylesheet" href="{% static 'user/car_page.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+        integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>{{ car.brand }} {{ car.car_models }}, {{ car.engine_power }} L, {{ car.year }} il, {{ car.status }}</h1>
+            <div class="actions">
+                <button class="icon" id="heart-icon" data-car-id="{{ car.id }}">
+                    <i class="fas fa-heart"></i>Seçilmişlər
+                </button>
+                <button class="report-btn"><i class="fa fa-flag"></i> Şikayət et</button>
+            </div>
+        </div>
+        <div class="main-content">
+            <div class="car-images">
+                <img src="{{ car.front_view_image.url }}" alt="Car Image">
+                <div class="thumbnails">
+                    <img src="{{ car.front_view_image.url }}" alt="Car Image">
+                    <img src="{{ car.rear_view_image.url }}" alt="Thumbnail">
+                    <img src="{{ car.interior_view_image.url }}" alt="Thumbnail">
+                </div>
+            </div>
+            <div class="car-details">
+                <div class="price">
+                    <span>{{ car.price }}</span>
+                    <span>AZN</span>
+                </div>
+                <div class="contact-info">
+                    <p>{{ car.phone_number }}</p>
+                </div>
+                <div class="description">
+                    <p>Qİymətlərə ƏDV daxildir</p>
+                    <p>Avtosalon "040 Cars" yeni və ikinci əl Toyota avtomobillərinin nağd və köçürmə yolu ilə, ƏDV daxil və xaric, sərfəli kredit və lizing şərtləri ilə satışını həyata keçirir.</p>
+                </div>
+                <div class="additional-info">
+                    <p>Yeniləndi: 25.07.2024</p>
+                    <p>Baxışların sayı: 24600</p>
+                </div>
+                <table class="specifications">
+                    <tr>
+                        <td>Şəhər</td>
+                        <td>{{ car.city }}</td>
+                        <td>Sürətlər qutusu</td>
+                        <td>{{ car.transmission }}</td>
+                    </tr>
+                    <tr>
+                        <td>Marka</td>
+                        <td>{{ car.brand }}</td>
+                        <td>Ötürücü</td>
+                        <td>{{ car.transmission_type }}</td>
+                    </tr>
+                    <tr>
+                        <td>Model</td>
+                        <td>{{ car.car_models }}</td>
+                        <td>Status</td>
+                        <td>{{ car.car_status }}</td>
+                    </tr>
+                    <tr>
+                        <td>Buraxılış ili</td>
+                        <td>{{ car.year }}</td>
+                        <td>Yerlərin sayı</td>
+                        <td>{{ car.seat_count }}</td>
+                    </tr>
+                    <tr>
+                        <td>Ban növü</td>
+                        <td>{{ car.new_bord }}</td>
+                        <td>Sahibler</td>
+                        <td>{{ car.owner_number }}</td>
+                    </tr>
+                    <tr>
+                        <td>Rəng</td>
+                        <td>{{ car.color }}</td>
+                        <td>Vəziyyəti</td>
+                        <td>{{ car.status }}, {{ car.damage_have }}</td>
+                    </tr>
+                    <tr>
+                        <td>Mühərrik</td>
+                        <td>{{ car.engine_capasity }}L / {{ car.engine_power }} a.g./ {{ car.fuel_type }}</td>
+                        <td>Hansı bazar üçün</td>
+                        <td>{{ car.collected_for_which_market }}</td>
+                    </tr>
+                    <tr>
+                        <td>Yürüş</td>
+                        <td>{{ car.mileage }} {{ car.mileage_unit }}</td>
+                    </tr>
+                </table>
+                <div class="seller-info">
+                    <p>Salon: 040 Cars</p>
+                    <p>Adres: Bakı ş., Nizami r., Babək pr., 2270/77</p>
+                    <a><a href="{% url 'salons' %}"><button class="visit-salon-btn">Salona keç</button></a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="favourites.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>

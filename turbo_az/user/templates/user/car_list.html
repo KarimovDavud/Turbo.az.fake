@@ -1,0 +1,23 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Avtomobil Siyahısı</title>
+</head>
+<body>
+    <h2>Avtomobil Siyahısı</h2>
+    
+    <form method="get">
+        {{ form.as_p }}
+        <button type="submit">Filtrlə</button>
+    </form>
+
+    <ul>
+        {% for car in cars %}
+        <li>
+            <a href="{% url 'car_list' %}">{{ car.brand }} {{ car.car_models }}</a>
+        </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

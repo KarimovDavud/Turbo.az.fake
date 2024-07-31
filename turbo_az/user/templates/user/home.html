@@ -1,0 +1,161 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Avtomobil Siyahısı</title>
+    <link rel="stylesheet" href="{% static 'user/home.css' %}">
+    <link rel="stylesheet" href="{% static 'user/create_car.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+        integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+</head>
+
+<body>
+    <header>
+        <div class="head-info">
+            <div class="container">
+                <div class="row">
+                    <ul class="d-flex">
+                        <li><a href="https://tap.az/">Tap.az</a></li>
+                        <li><a href="https://bina.az/">Bina.az</a></li>
+                        <li><a href="https://boss.az/">Boss.az</a></li>
+                    </ul>
+                    <ul class="d-flex">
+                        <span>Dəstək: (012) 505-77-55</span>
+                        <li><a href="">Yardım</a></li>
+                        <li><a href="">RU</a></li>
+                        <li><a href="{% url 'like_page' %}"><i class="fa-solid fa-heart"></i> Seçilmişlər</a></li>
+                        <li><a href="{% url 'login_register' %}"><i class="fa-solid fa-circle-user"></i> Giriş</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="web-navbar">
+            <div class="container">
+                <div class="row">
+                    <div class="nav-1 d-flex g-5">
+                        <ul class="d-flex">
+                            <li><a href="{% url 'home' %}">Ana səhifə</a></li>
+                            <li><a href="{% url 'home' %}">Bütün elanlar</a></li>
+                            <li><a href="{% url 'salons' %}">Salonlar</a></li>
+                            <li><a href="">Moto</a></li>
+                            <li><a href="">Ehtiyat hissələri və aksesuarlar</a></li>
+                            <li><a href="">İcarə</a></li>
+                        </ul>
+                    </div>
+                    <div class="nav-2">
+                        <div class="btn">
+                            <a href="{% url 'create_car' %}"><span><i class="fa-solid fa-circle-plus"></i></span>Yeni elan</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <div class="container">
+        <!-- Filtr Formu -->
+        <form method="get" action="{% url 'home' %}" class="filter-form">
+            <div class="filter-group">
+                {{ form.brand.label_tag }} {{ form.brand }}
+                {{ form.model.label_tag }} {{ form.model }}
+            </div>
+            <div class="filter-group">
+                {{ form.min_price.label_tag }} {{ form.min_price }}
+                {{ form.max_price.label_tag }} {{ form.max_price }}
+                {{ form.MONEY_CURRENC.label_tag }} {{ form.MONEY_CURRENC }}
+                {{ form.credit_or_trade.label_tag }} {{ form.credit_or_trade }}
+            </div>
+            <div class="filter-group">
+                {{ form.COLOR.label_tag }} {{ form.COLOR }}
+                {{ form.FUEL_TYPE.label_tag }} {{ form.FUEL_TYPE }}
+                {{ form.TRANSMISSION_TYPE.label_tag }} {{ form.TRANSMISSION_TYPE }}
+                {{ form.TRANSMISSION.label_tag }} {{ form.TRANSMISSION }}
+            </div>
+            <div class="filter-group">
+                {{ form.min_engine_capacity.label_tag }} {{ form.min_engine_capacity }}
+                {{ form.max_engine_capacity.label_tag }} {{ form.max_engine_capacity }}
+                {{ form.min_power.label_tag }} {{ form.min_power }}
+                {{ form.max_power.label_tag }} {{ form.max_power }}
+                {{ form.min_mileage.label_tag }} {{ form.min_mileage }}
+                {{ form.max_mileage.label_tag }} {{ form.max_mileage }}
+                {{ form.MILEAGE_UNIT.label_tag }} {{ form.MILEAGE_UNIT }}
+            </div>
+            <div class="filter-group">
+                {{ form.BODY_TYPE.label_tag }} {{ form.BODY_TYPE }}
+                {{ form.min_year.label_tag }} {{ form.max_year }}
+                {{ form.max_year.label_tag }} {{ form.min_year }}
+            </div>
+            <div class="filter-group">
+                {{ form.CITY.label_tag }} {{ form.CITY }}
+            </div>
+            <div class="filter-group">
+                {{ form.OWNER_COUNT.label_tag }} {{ form.OWNER_COUNT }}
+                {{ form.SEAT_COUNT.label_tag }} {{ form.SEAT_COUNT }}
+                {{ form.MARKET.label_tag }} {{ form.MARKET }}
+                {{ form.CAR_STATUS.label_tag }} {{ form.CAR_STATUS }}
+            </div>
+            <div class="filter-group">
+                {{ form.no_damage.label_tag }} {{ form.no_damage }}
+                {{ form.no_paint.label_tag }} {{ form.no_paint }}
+                {{ form.accident_only.label_tag }} {{ form.accident_only }}
+            </div>
+            <div class="filter-group">
+                {{ form.alloy_wheels.label_tag }} {{ form.alloy_wheels }}
+                {{ form.abs.label_tag }} {{ form.abs }}
+                {{ form.sunroof.label_tag }} {{ form.sunroof }}
+                {{ form.rain_sensor.label_tag }} {{ form.rain_sensor }}
+                {{ form.central_locking.label_tag }} {{ form.central_locking }}
+                {{ form.park_sensors.label_tag }} {{ form.park_sensors }}
+                {{ form.air_conditioning.label_tag }} {{ form.air_conditioning }}
+                {{ form.seat_heating.label_tag }} {{ form.seat_heating }}
+                {{ form.leather_seats.label_tag }} {{ form.leather_seats }}
+                {{ form.xenon_lights.label_tag }} {{ form.xenon_lights }}
+                {{ form.rear_camera.label_tag }} {{ form.rear_camera }}
+                {{ form.side_airbags.label_tag }} {{ form.side_airbags }}
+                {{ form.ventilated_seats.label_tag }} {{ form.ventilated_seats }}
+            </div>
+            <div class="bottom-section">
+                <button type="submit" class="submit-button">Elanları göstər</button>
+                <button type="reset" class="reset-button">Sıfırla</button>
+            </div>
+        </form>
+
+        <!-- Avtomobil Siyahısı -->
+        <div class="car-list">
+            {% for car in cars %}
+                <div class="car-item">
+                    <img src="{{ car.front_view_image.url }}" alt="{{ car.model }}" />
+                    <p>Qiymət: {{ car.price }} {{ car.price_currency }}</p>
+                    <p>{{ car.brand }} {{ car.car_models }}</p>
+                    <h4> {{car.year}}, {{ car.engine_power }} hp, {{ car.mileage }} {{car.mileage_unit}} </h4>
+                    <h5> {{ car.city }} {{ car.time }}</h5>
+                    <a href="{% url 'car_page' car.id %}" class="btn btn-primary">Ətraflı</a>
+                </div>
+            {% empty %}
+                <p>Əlavə edilmiş avtomobillər yoxdur.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <footer>
+        <!-- Footer məlumatları -->
+    </footer>
+
+    <script>
+        document.querySelector('.reset-button').addEventListener('click', function() {
+            window.location.href = window.location.pathname;
+        });
+    </script>
+
+    <script src="{% static 'user/main.js' %}"></script>
+</body>
+</html>
