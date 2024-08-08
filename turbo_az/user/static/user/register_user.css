@@ -1,65 +1,122 @@
-/* styles.css */
+/* register_user.css */
+
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+    font-family: 'Arial', sans-serif;
+    background-color: #f0f2f5;
     margin: 0;
+    padding: 0;
+    color: #333;
+}
+
+.btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+.new-ad-button {
+    display: inline-block;
+    background-color: #ff4d4d;
+    color: #fff;
+    font-size: 24px;
+    padding: 10px 15px;
+    border-radius: 50%;
+    text-decoration: none;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.new-ad-button:hover {
+    background-color: #cc0000;
+    transform: scale(1.1);
 }
 
 .register-container {
-    background-color: #fff;
+    width: 90%;
+    max-width: 500px;
+    margin: 80px auto;
     padding: 20px;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    width: 300px;
-    text-align: center;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-h2 {
+.register-container h2 {
+    font-size: 24px;
+    color: #333;
     margin-bottom: 20px;
+    text-align: center;
 }
 
 .form-group {
     margin-bottom: 15px;
-    text-align: left;
 }
 
-label {
+.form-group label {
     display: block;
     margin-bottom: 5px;
+    font-weight: 500;
+    color: #555;
 }
 
-input[type="text"], input[type="password"], input[type="email"], input[type="tel"], input[type="date"], select {
+.form-group input,
+.form-group select {
     width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
+    padding: 12px;
+    border: 1px solid #ddd;
     border-radius: 4px;
-    margin-top: 5px;
+    box-sizing: border-box;
+    font-size: 16px;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: #3498db;
+    outline: none;
 }
 
 button {
-    background-color: #5cb85c;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 4px;
-    cursor: pointer;
+    display: block;
     width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 4px;
+    background-color: #3498db;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
 button:hover {
-    background-color: #4cae4c;
+    background-color: #2980b9;
 }
 
-ul {
-    list-style-type: none;
+.messages {
+    list-style: none;
     padding: 0;
-    margin-top: 10px;
+    margin-top: 20px;
 }
 
-li {
-    color: red;
+.messages li {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    font-size: 14px;
+    text-align: center;
+}
+
+p {
+    text-align: center;
+    margin-top: 20px;
+}
+
+p a {
+    color: #3498db;
+    text-decoration: none;
+}
+
+p a:hover {
+    text-decoration: underline;
 }

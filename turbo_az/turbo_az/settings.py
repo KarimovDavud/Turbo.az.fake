@@ -37,11 +37,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_celery_results',
     'user',
     'salons',
     'rest_framework',
     'dal',
-    'dal_select2'
+    'dal_select2',
+    'celery',
+    'redis',
 ]
 
 MIDDLEWARE = [
@@ -139,3 +142,22 @@ EMAIL_USE_SSL = False
 EMAIL_HOST_USER = 'rzazadfrid@gmail.com'
 EMAIL_HOST_PASSWORD = 'yzbt nmvl atqh olmp'
 DEFAULT_FROM_EMAIL = 'rzazadfrid@gmail.com'
+ADMIN_EMAIL = 'admin@example.com'
+
+
+LOGOUT_REDIRECT_URL = 'home'
+
+
+CELERY_TIMEZONE = "Asia/Baku"
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 30 * 60
+
+CELERY_RESULT_BACKEND = 'django-db'
+
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
+LOGIN_URL = '/login-register/'  

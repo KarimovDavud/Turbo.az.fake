@@ -9,20 +9,20 @@
     <h2>Yeni elan yaradıldı</h2>
     <p>Yeni elan haqqında məlumat:</p>
     <p>Marka: {{ car.brand }}</p>
-    <p>Model: {{ car.model }}</p>
+    <p>Model: {{ car.car_models }}</p>
     <p>Yanacaq Növü: {{ car.fuel_type }}</p>
     <p>Yürüş Sistemi: {{ car.transmission }}</p>
-    <p>Korpus Növü: {{ car.body_type }}</p>
+    <p>Korpus Növü: {{ car.new_bord }}</p>
     <p>Rəng: {{ car.color }}</p>
-    <p>Bazar: {{ car.market }}</p>
+    <p>Bazar: {{ car.collected_for_which_market }}</p>
     <p>Şəhər: {{ car.city }}</p>
     <p>Oturacaq Sayı: {{ car.seat_count }}</p>
-    <p>Sahib Sayı: {{ car.owner_count }}</p>
+    <p>Sahib Sayı: {{ car.owner_number }}</p>
     <p>İl: {{ car.year }}</p>
-    <p>Kilometraj: {{ car.milage_car }}</p>
-    <p>Valyuta: {{ car.mony_currenc }}</p>
+    <p>Kilometraj: {{ car.mileage }}</p>
+    <p>Valyuta: {{ car.price_currency }}</p>
     <p>Yürüş Sistemi Növü: {{ car.transmission_type }}</p>
-    <p>Şəkil: {{ car.image_car }}</p>
+    <p>Şəkil: {{ car.front_view_image }}</p>
     <p>Status: {{ car.car_status }}</p>
     <p><a href="{% url 'approve_car' car.id %}">Təsdiqlə</a></p>
 </body>

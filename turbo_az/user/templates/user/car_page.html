@@ -15,9 +15,7 @@
         <div class="header">
             <h1>{{ car.brand }} {{ car.car_models }}, {{ car.engine_power }} L, {{ car.year }} il, {{ car.status }}</h1>
             <div class="actions">
-                <button class="icon" id="heart-icon" data-car-id="{{ car.id }}">
-                    <i class="fas fa-heart"></i>Seçilmişlər
-                </button>
+                <a href="{% url 'home' %}" class="edit-button"><button>Geri</button></a>
                 <button class="report-btn"><i class="fa fa-flag"></i> Şikayət et</button>
             </div>
         </div>

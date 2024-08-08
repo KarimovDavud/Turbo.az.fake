@@ -9,14 +9,17 @@ class CustomPasswordResetView(PasswordResetView):
     subject_template_name = 'user/password_reset_subject.txt'
     email_template_name = 'user/password_reset_email.html'
 
+
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    bio = models.TextField(max_length=500, blank=True)
-    location = models.CharField(max_length=30, blank=True)
+    name = models.CharField(max_length=16)
+    phone = models.CharField(max_length=15)
     birth_date = models.DateField(null=True, blank=True)
+    gender = models.CharField(max_length=10, choices=[('male', 'Kişi'), ('female', 'Qadın'), ('other', 'Digər')], null=True, blank=True)
 
     def __str__(self):
         return self.user.username
+
 
 class Mileage(models.Model):
     name = models.CharField(max_length=6)
@@ -106,14 +109,19 @@ class IsApproved(models.Model):
     def __str__(self):
         return self.name
 
+class IsVip(models.Model):
+    name = models.CharField(max_length=30, verbose_name='Vip')
+
+    def __str__(self):
+        return self.name
 
 class Car(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     brand = models.ForeignKey(Brand, on_delete=models.CASCADE, verbose_name='Marka')
     car_models = models.ForeignKey(CarModel, on_delete=models.CASCADE, verbose_name='Model')
-    new_bord = models.ForeignKey(BodyTypeChoices, on_delete=models.CASCADE, verbose_name='Ban novu')
     mileage = models.PositiveIntegerField(verbose_name='Yuruyus')
     mileage_unit = models.ForeignKey(Mileage, on_delete=models.CASCADE, default='km')
+    new_bord = models.ForeignKey(BodyTypeChoices, on_delete=models.CASCADE, verbose_name='Ban novu')
     color = models.ForeignKey(ColorChoices, on_delete=models.CASCADE, verbose_name='Reng')
     price = models.PositiveIntegerField(verbose_name='Qiymət')
     price_currency = models.ForeignKey(MoneyCurrencies, on_delete=models.CASCADE, default='AZN', verbose_name='Valyuta')
@@ -154,7 +162,9 @@ class Car(models.Model):
     phone_number = models.CharField(max_length=20, verbose_name='Telefon nömrəsi')
     transmission_type = models.ForeignKey(TransmissionType, on_delete=models.CASCADE, null=True, verbose_name='Ötürücü')
     car_status = models.ForeignKey(CarStatus, on_delete=models.CASCADE, null=True, verbose_name='Status')
-    is_approved = models.BooleanField(default=False, verbose_name='Tesdiq')
+    is_approved = models.BooleanField(default=False, verbose_name='Təsdiq')
+    is_vip = models.BooleanField(default=False, verbose_name='Vip')
+
     def __str__(self):
         return f"{self.brand} {self.car_models} - {self.price}"
 
@@ -168,5 +178,4 @@ class ImageCar(models.Model):
     class Meta:
         verbose_name = 'Avtomobil Şəkili'
         verbose_name_plural = 'Avtomobil Şəkilləri'
-
 

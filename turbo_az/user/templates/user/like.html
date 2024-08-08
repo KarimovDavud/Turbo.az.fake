@@ -35,9 +35,17 @@
                         <li><a href="{% url 'like_page' %}">
                             <i class="fa-solid fa-heart"></i> Seçilmişlər
                         </a></li>
-                        <li><a href="{% url 'login_register' %}">
-                            <i class="fa-solid fa-circle-user"></i> Giriş
-                        </a></li>
+                        {% if user.is_authenticated %}
+                        <li>
+                            <form method="post" action="{% url 'logout' %}" style="display: inline;">
+                                {% csrf_token %}
+                                <button type="submit"><i class="fa-solid fa-circle-user"></i> Çıxış</button>
+                            </form>
+                        </li>
+                        {% else %}
+                        <li><a href="{% url 'login_register' %}"><i class="fa-solid fa-circle-user"></i> Giriş</a></li>
+                        {% endif %}
+                    </ul>
                     </ul>
                 </div>
             </div>

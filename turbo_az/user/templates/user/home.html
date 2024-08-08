@@ -33,7 +33,18 @@
                         <li><a href="">Yardım</a></li>
                         <li><a href="">RU</a></li>
                         <li><a href="{% url 'like_page' %}"><i class="fa-solid fa-heart"></i> Seçilmişlər</a></li>
+                        {% if user.is_authenticated %}
+                        <li>
+                            <form method="post" action="{% url 'logout' %}" style="display: inline;">
+                                {% csrf_token %}
+                                <button type="submit"><i class="fa-solid fa-circle-user"></i> Çıxış</button>
+                            </form>
+                            <li><a href="{% url 'user_profile' %}">Profile</a></li>
+
+                        </li>
+                        {% else %}
                         <li><a href="{% url 'login_register' %}"><i class="fa-solid fa-circle-user"></i> Giriş</a></li>
+                        {% endif %}
                     </ul>
                 </div>
             </div>
@@ -81,8 +92,8 @@
                 {{ form.TRANSMISSION.label_tag }} {{ form.TRANSMISSION }}
             </div>
             <div class="filter-group">
-                {{ form.min_engine_capacity.label_tag }} {{ form.min_engine_capacity }}
-                {{ form.max_engine_capacity.label_tag }} {{ form.max_engine_capacity }}
+                {{ form.min_engine_capasity.label_tag }} {{ form.min_engine_capasity }}
+                {{ form.max_engine_capasity.label_tag }} {{ form.max_engine_capasity }}
                 {{ form.min_power.label_tag }} {{ form.min_power }}
                 {{ form.max_power.label_tag }} {{ form.max_power }}
                 {{ form.min_mileage.label_tag }} {{ form.min_mileage }}
@@ -91,8 +102,8 @@
             </div>
             <div class="filter-group">
                 {{ form.BODY_TYPE.label_tag }} {{ form.BODY_TYPE }}
-                {{ form.min_year.label_tag }} {{ form.max_year }}
-                {{ form.max_year.label_tag }} {{ form.min_year }}
+                {{ form.min_year.label_tag }} {{ form.min_year }}
+                {{ form.max_year.label_tag }} {{ form.max_year }}
             </div>
             <div class="filter-group">
                 {{ form.CITY.label_tag }} {{ form.CITY }}
@@ -128,21 +139,33 @@
                 <button type="reset" class="reset-button">Sıfırla</button>
             </div>
         </form>
-
         <!-- Avtomobil Siyahısı -->
         <div class="car-list">
-            {% for car in cars %}
-                <div class="car-item">
-                    <img src="{{ car.front_view_image.url }}" alt="{{ car.model }}" />
-                    <p>Qiymət: {{ car.price }} {{ car.price_currency }}</p>
-                    <p>{{ car.brand }} {{ car.car_models }}</p>
-                    <h4> {{car.year}}, {{ car.engine_power }} hp, {{ car.mileage }} {{car.mileage_unit}} </h4>
-                    <h5> {{ car.city }} {{ car.time }}</h5>
-                    <a href="{% url 'car_page' car.id %}" class="btn btn-primary">Ətraflı</a>
+            <div class="content-car">
+                {% for car in cars %}
+                <div class="card {% if car.is_vip %}vip{% endif %}" id="{{ car.id }}">
+                    <button class="icon" id="heart-icon" data-car-id="{{ car.id }}">
+                        <i class="fas fa-heart"></i>
+                    </button>
+                    <a href="{% url 'car_page' car.id %}">
+                        <img class="car-img" src="{{ car.front_view_image.url }}" alt="Car Image">
+                        <div class="badge">{{ car.brand }}</div>
+                        <div class="card-body">
+                            <h5 class="car-model">{{ car.car_models }}</h5>
+                            <p class="car-info">{{ car.year }}, {{ car.engine_capasity }} L, {{ car.mileage }} km</p>
+                            <p class="car-location">{{ car.city }}, bugün 13:29</p>
+                        </div>
+                        <div class="card-footer">
+                            <span class="price">{{ car.price }} {{ car.price_currency }}</span>
+                            {% if car.is_vip %}
+                            <span class="details">VIP</span>
+                            {% endif %}
+
+                        </div>
+                    </a>
                 </div>
-            {% empty %}
-                <p>Əlavə edilmiş avtomobillər yoxdur.</p>
-            {% endfor %}
+                {% endfor %}
+            </div>
         </div>
     </div>
 

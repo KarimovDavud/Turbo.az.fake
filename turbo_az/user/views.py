@@ -1,4 +1,14 @@
-from django.core.mail import send_mail
+import base64
+
+from django.conf import settings
+from django.utils.html import strip_tags
+from .serializers import CarSerializer
+from rest_framework import generics
+from .forms import CarFilterForm
+from .tasks import create_car_task
+from django.core.files.storage import default_storage
+from celery import shared_task
+from django.core.mail import send_mail, EmailMessage
 from django.template.loader import render_to_string
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
@@ -8,8 +18,8 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import viewsets
 from dal import autocomplete
-from .forms import CarForm
-from .serializers import BrandSerializer, CarModelSerializer
+from .forms import *
+from .serializers import *
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import (
@@ -19,14 +29,22 @@ from .models import (
     TransmissionType, ImageCar, Profile, CarStatus
 )
 
-from .forms import CarFilterForm
 
+@login_required
 def delete_car(request, car_id):
     car = get_object_or_404(Car, id=car_id)
+    
+    if car.user != request.user:
+        messages.error(request, 'Siz bu elanı silməyə icazəniz yoxdur.')
+        return redirect('home')
+    
     if request.method == 'POST':
         car.delete()
         return redirect('home')
+    
     return render(request, 'user/delete_car.html', {'car': car})
+
+
 @login_required
 def user_cars(request):
     user = request.user
@@ -37,7 +55,25 @@ def user_cars(request):
 @login_required
 def user_profile(request):
     profile = Profile.objects.get(user=request.user)
-    return render(request, 'user/user_profile.html', {'profile': profile})
+    user_cars = Car.objects.filter(user=request.user)
+    context = {
+        'profile': profile,
+        'user_cars': user_cars
+    }
+    return render(request, 'user/user_profile.html', context)
+
+
+@login_required
+def delete_profile(request):
+    profile = get_object_or_404(Profile, user=request.user)
+    if request.method == 'POST':
+        user = profile.user
+        profile.delete()
+        user.delete()  # İstifadəçini də silmək üçün
+        messages.success(request, 'Profil və istifadəçi uğurla silindi.')
+        return redirect('home')  # Silindikdən sonra ana səhifəyə yönləndiririk
+    return render(request, 'user/delete_profile.html', {'profile': profile})
+
 
 
 def car_page(request, car_id):
@@ -45,14 +81,38 @@ def car_page(request, car_id):
     return render(request, 'user/car_page.html', {'car': car})
 
 
+
+@login_required
+def edit_profile(request):
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, instance=request.user, user=request.user)
+        if form.is_valid():
+            user = form.save()
+            profile, created = Profile.objects.get_or_create(user=user)
+            profile.phone = form.cleaned_data['phone']
+            profile.gender = form.cleaned_data['gender']
+            profile.birth_date = form.cleaned_data['birth_date']
+            profile.save()
+            messages.success(request, 'Profiliniz uğurla yeniləndi.')
+            return redirect('home')  # Əsas səhifəyə yönləndirir
+    else:
+        form = ProfileForm(instance=request.user, user=request.user)
+    
+    return render(request, 'user/edit_profile.html', {'form': form})
+
+@login_required
 def edit_car(request, car_id):
     car = get_object_or_404(Car, id=car_id)
+    
+    if car.user != request.user:
+        messages.error(request, 'Siz bu elanı redaktə etməyə icazəniz yoxdur.')
+        return redirect('home')
     
     if request.method == 'POST':
         form = CarForm(request.POST, request.FILES, instance=car)
         if form.is_valid():
             form.save()
-            return redirect('home') 
+            return redirect('home')
     else:
         form = CarForm(instance=car)
     
@@ -61,53 +121,64 @@ def edit_car(request, car_id):
 def register_user(request):
     if request.method == 'POST':
         username = request.POST.get('username')
+        email = request.POST.get('email')
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        phone = request.POST.get('phone')
+        gender = request.POST.get('gender')
+        birth_date = request.POST.get('birth_date')
         password = request.POST.get('password')
         confirm_password = request.POST.get('confirm_password')
-        email = request.POST.get('email')
         
         if not username:
             messages.error(request, 'İstifadəçi adı daxil edilməlidir.')
             return render(request, 'user/register_user.html')
         
         if not email:
-            messages.error(request, 'Email daxil edilməlidir.')
+            messages.error(request, 'E-mail daxil edilməlidir.')
             return render(request, 'user/register_user.html')
         
-        if password == confirm_password:
-            if User.objects.filter(username=username).exists():
-                messages.error(request, 'Bu istifadəçi adı artıq mövcuddur.')
-            else:
-                user = User.objects.create_user(username=username, password=password, email=email)
-                user.save()
-                profile, created = Profile.objects.get_or_create(user=user)
-                if created:
-                    profile.save()
-                login(request, user)
-                
-                # Email göndərmə məntiqi
-                subject = 'Qeydiyyatınız tamamlandı'
-                recipient_list = [user.email]  # istifadəçinin email adresi
-                customer_message = render_to_string('user/register_email.html', {'username': username})
-
-                try:
-                    send_mail(
-                        subject,
-                        '',
-                        'rzazadfrid@gmail.com',
-                        recipient_list,
-                        fail_silently=False,
-                        html_message=customer_message,
-                    )
-                    messages.success(request, 'Qeydiyyat uğurla tamamlandı və e-poçt göndərildi.')
-                except Exception as e:
-                    messages.error(request, f'E-poçt göndərməkdə problem var: {e}')
-                
-                return redirect('home')
-        else:
+        if password != confirm_password:
             messages.error(request, 'Şifrələr uyğun deyil.')
+            return render(request, 'user/register_user.html')
+
+        if User.objects.filter(username=username).exists():
+            messages.error(request, 'Bu istifadəçi adı artıq mövcuddur.')
+            return render(request, 'user/register_user.html')
+
+        user = User.objects.create_user(username=username, password=password, email=email, first_name=first_name, last_name=last_name)
+        user.save()
+
+        profile, created = Profile.objects.get_or_create(user=user, phone=phone, gender=gender, birth_date=birth_date)
+        if created:
+            profile.save()
+
+        login(request, user)
+        
+        # Email göndərmə məntiqi
+        subject = 'Qeydiyyatınız tamamlandı'
+        recipient_list = [user.email]  # istifadəçinin email adresi
+        customer_message = render_to_string('user/register_email.html', {'username': username})
+
+        try:
+            send_mail(
+                subject,
+                '',
+                'rzazadfrid@gmail.com',
+                recipient_list,
+                fail_silently=False,
+                html_message=customer_message,
+            )
+            messages.success(request, 'Qeydiyyat uğurla tamamlandı və e-poçt göndərildi.')
+        except Exception as e:
+            messages.error(request, f'E-poçt göndərməkdə problem var: {e}')
+        
+        return redirect('home')
     
     return render(request, 'user/register_user.html')
 
+
+    
 def login_user(request):
     if request.method == 'POST':
         print(request.POST)  
@@ -124,31 +195,39 @@ def login_user(request):
     return render(request, 'user/login_user.html')
 
 
+
 @login_required
 def create_car(request):
     if request.method == 'POST':
         form = CarForm(request.POST, request.FILES)
         if form.is_valid():
-            car = form.save(commit=False)
-            car.user = request.user
-            car.is_approved = False  # Yeni əlavə olunan sahə
-            car.save()
-            
-            # Adminə email göndərmək
-            subject = 'Yeni elan yaradıldı'
-            recipient_list = ['admin@example.com']
-            customer_message = render_to_string('user/admin_notify_email.html', {'car': car})
-            
-            send_mail(
-                subject,
-                '',
-                'from@example.com',  # Göndərənin emaili
-                recipient_list,
-                fail_silently=False,
-                html_message=customer_message,
-            )
-            
-            messages.success(request, 'Elanınız göndərildi və admin tərəfindən təsdiqlənməsini gözləyir.')
+            # Form məlumatlarını model instansiyasına çevir
+            car_instance = form.save(commit=False)
+            car_instance.user = request.user
+            car_instance.save()
+
+            # Model instansiyasını serializer ilə JSON formatına çevir
+            serializer = CarSerializer(car_instance)
+            serialized_data = serializer.data
+
+            # Faylları base64 formatına çevir
+            file_data_list = []
+            for file in request.FILES.values():
+                file_data = base64.b64encode(file.read()).decode('utf-8')
+                file_data_list.append(f"data:{file.content_type};base64,{file_data}")
+
+            # Asinxron iş yarat
+            create_car_task.delay(request.user.id, serialized_data, file_data_list)
+
+            # Email göndərmə
+            subject = 'Yeni Elanınız Yaradıldı'
+            html_message = render_to_string('user/user_notify_email.html', {'car': serialized_data})
+            from_email = settings.DEFAULT_FROM_EMAIL
+            recipient_list = [request.user.email, settings.ADMIN_EMAIL]
+
+            email = EmailMessage(subject, html_message, from_email, recipient_list)
+            email.send()
+            messages.success(request, 'İlanınız göndərildi və admin tərəfindən təsdiqlənməsini gözləyir.')
             return redirect('home')
     else:
         form = CarForm()
@@ -174,7 +253,6 @@ def create_car(request):
     }
     return render(request, 'user/create_car.html', context)
 
-
 @login_required
 def approve_car(request, car_id):
     if request.user.is_superuser:
@@ -190,55 +268,57 @@ def approve_car(request, car_id):
     
     return redirect('admin_car_list')
 
-
 def home(request):
     form = CarFilterForm(request.GET or None)
-    cars = Car.objects.filter(is_approved=True)  # Yalnızca onaylanmış ilanları getir
+    vip_cars = Car.objects.filter(is_vip=True).order_by('-is_vip')  
 
+    cars = Car.objects.filter(is_approved=True).order_by('-is_vip') 
     if form.is_valid():
         filters = {}
         
-        # Filtrləri tətbiq etmək
-        if form.cleaned_data.get('brand'):
-            filters['brand'] = form.cleaned_data['brand']
-        if form.cleaned_data.get('model'):
-            filters['car_models'] = form.cleaned_data['model']
-        if form.cleaned_data.get('min_price'):
-            filters['price__gte'] = form.cleaned_data['min_price']
-        if form.cleaned_data.get('max_price'):
-            filters['price__lte'] = form.cleaned_data['max_price']
-        if form.cleaned_data.get('min_engine_capacity'):
-            filters['engine_capacity__gte'] = form.cleaned_data['min_engine_capacity']
-        if form.cleaned_data.get('max_engine_capacity'):
-            filters['engine_capacity__lte'] = form.cleaned_data['max_engine_capacity']
-        if form.cleaned_data.get('min_power'):
-            filters['engine_power__gte'] = form.cleaned_data['min_power']
-        if form.cleaned_data.get('max_power'):
-            filters['engine_power__lte'] = form.cleaned_data['max_power']
-        if form.cleaned_data.get('min_mileage'):
-            filters['mileage__gte'] = form.cleaned_data['min_mileage']
-        if form.cleaned_data.get('max_mileage'):
-            filters['mileage__lte'] = form.cleaned_data['max_mileage']
-        if form.cleaned_data.get('min_year'):
-            filters['year__gte'] = form.cleaned_data['min_year']
-        if form.cleaned_data.get('max_year'):
-            filters['year__lte'] = form.cleaned_data['max_year']
-        if form.cleaned_data.get('CITY'):
-            filters['city'] = form.cleaned_data['CITY']
-        if form.cleaned_data.get('OWNER_COUNT'):
-            filters['owner_number'] = form.cleaned_data['OWNER_COUNT']
-        if form.cleaned_data.get('SEAT_COUNT'):
-            filters['seat_count'] = form.cleaned_data['SEAT_COUNT']
-        if form.cleaned_data.get('MARKET'):
-            filters['collected_for_which_market'] = form.cleaned_data['MARKET']
-        if form.cleaned_data.get('CAR_STATUS'):
-            filters['car_status'] = form.cleaned_data['CAR_STATUS']
-        if form.cleaned_data.get('BODY_TYPE'):
-            filters['body_type'] = form.cleaned_data['BODY_TYPE']
-        if form.cleaned_data.get('MILEAGE_UNIT'):
-            filters['mileage_unit'] = form.cleaned_data['MILEAGE_UNIT']
+        cleaned_data = form.cleaned_data
 
+        if cleaned_data.get('brand'):
+            filters['brand__name'] = cleaned_data['brand']
+        if cleaned_data.get('model'):
+            filters['car_models__name'] = cleaned_data['model']
+        if cleaned_data.get('min_price'):
+            filters['price__gte'] = cleaned_data['min_price']
+        if cleaned_data.get('max_price'):
+            filters['price__lte'] = cleaned_data['max_price']
+        if cleaned_data.get('min_engine_capasity'):
+            filters['engine_capasity__gte'] = cleaned_data['min_engine_capasity']
+        if cleaned_data.get('max_engine_capasity'):
+            filters['engine_capasity__lte'] = cleaned_data['max_engine_capasity']
+        if cleaned_data.get('min_power'):
+            filters['engine_power__gte'] = cleaned_data['min_power']
+        if cleaned_data.get('max_power'):
+            filters['engine_power__lte'] = cleaned_data['max_power']
+        if cleaned_data.get('min_mileage'):
+            filters['mileage__gte'] = cleaned_data['min_mileage']
+        if cleaned_data.get('max_mileage'):
+            filters['mileage__lte'] = cleaned_data['max_mileage']
+        if cleaned_data.get('min_year'):
+            filters['year__gte'] = cleaned_data['max_year']
+        if cleaned_data.get('max_year'):
+            filters['year__lte'] = cleaned_data['min_year']
+        if cleaned_data.get('CITY'):
+            filters['city__name'] = cleaned_data['CITY']
+        if cleaned_data.get('OWNER_COUNT'):
+            filters['owner_number'] = cleaned_data['OWNER_COUNT']
+        if cleaned_data.get('SEAT_COUNT'):
+            filters['seat_count'] = cleaned_data['SEAT_COUNT']
+        if cleaned_data.get('MARKET'):
+            filters['collected_for_which_market'] = cleaned_data['MARKET']
+        if cleaned_data.get('CAR_STATUS'):
+            filters['car_status'] = cleaned_data['CAR_STATUS']
+        if cleaned_data.get('BODY_TYPE'):
+            filters['body_type'] = cleaned_data['BODY_TYPE']
+        if cleaned_data.get('MILEAGE_UNIT'):
+            filters['mileage_unit'] = cleaned_data['MILEAGE_UNIT']
+        
         cars = cars.filter(**filters)
+        cars = cars.order_by('-is_vip', 'id')
 
     context = {
         'form': form,
@@ -258,11 +338,18 @@ def home(request):
         'mony_currenc': MoneyCurrencies.objects.all(),
         'transmission_type': TransmissionType.objects.all(),
         'image_car': ImageCar.objects.all(),
-        'car_status': CarStatus.objects.all()
+        'car_status': CarStatus.objects.all(),
+        'is_vip': IsVip.objects.all(),
     }
+
+    if request.user.is_authenticated:
+        user_cars = Car.objects.filter(user=request.user)
+        profile = Profile.objects.get(user=request.user)
+        context.update({
+            'user_cars': user_cars,
+            'profile': profile,
+        })
     return render(request, 'user/home.html', context)
-
-
 
 
 def login_register(request):
@@ -288,6 +375,67 @@ class BrandViewSet(viewsets.ModelViewSet):
 class CarModelViewSet(viewsets.ModelViewSet):
     queryset = CarModel.objects.all()
     serializer_class = CarModelSerializer
+
+
+class MileageViewSet(viewsets.ModelViewSet):
+    queryset = Mileage.objects.all()
+    serializer_class = MileageSerializer
+
+class MoneyCurrenciesViewSet(viewsets.ModelViewSet):
+    queryset = MoneyCurrencies.objects.all()
+    serializer_class = MoneyCurrenciesSerializer
+
+class FuelTypeChoicesViewSet(viewsets.ModelViewSet):
+    queryset = FuelTypeChoices.objects.all()
+    serializer_class = FuelTypeChoicesSerializer
+
+class TransmissionChoicesViewSet(viewsets.ModelViewSet):
+    queryset = TransmissionChoices.objects.all()
+    serializer_class = TransmissionChoicesSerializer
+
+class BodyTypeChoicesViewSet(viewsets.ModelViewSet):
+    queryset = BodyTypeChoices.objects.all()
+    serializer_class = BodyTypeChoicesSerializer
+
+class ColorChoicesViewSet(viewsets.ModelViewSet):
+    queryset = ColorChoices.objects.all()
+    serializer_class = ColorChoicesSerializer
+
+class MarketChoicesViewSet(viewsets.ModelViewSet):
+    queryset = MarketChoices.objects.all()
+    serializer_class = MarketChoicesSerializer
+
+class CityChoicesViewSet(viewsets.ModelViewSet):
+    queryset = CityChoices.objects.all()
+    serializer_class = CityChoicesSerializer
+
+class SeatCountChoicesViewSet(viewsets.ModelViewSet):
+    queryset = SeatCountChoices.objects.all()
+    serializer_class = SeatCountChoicesSerializer
+
+class OwnerCountViewSet(viewsets.ModelViewSet):
+    queryset = OwnerCount.objects.all()
+    serializer_class = OwnerCountSerializer
+
+class YearChoicesViewSet(viewsets.ModelViewSet):
+    queryset = YearChoices.objects.all()
+    serializer_class = YearChoicesSerializer
+
+class CarStatusViewSet(viewsets.ModelViewSet):
+    queryset = CarStatus.objects.all()
+    serializer_class = CarStatusSerializer
+
+class IsApprovedViewSet(viewsets.ModelViewSet):
+    queryset = IsApproved.objects.all()
+    serializer_class = IsApprovedSerializer
+
+class CarViewSet(viewsets.ModelViewSet):
+    queryset = Car.objects.all()
+    serializer_class = CarSerializer
+
+class CarListView(generics.ListCreateAPIView):
+    queryset = Car.objects.all()
+    serializer_class = CarSerializer
 
 
 class CarModelAutocomplete(autocomplete.Select2QuerySetView):

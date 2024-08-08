@@ -93,7 +93,9 @@ body {
   gap: 10px;
 }
 
-.filter-group input, .filter-group select, .filter-group label {
+.filter-group input,
+.filter-group select,
+.filter-group label {
   border: 1px solid #ddd;
   border-radius: 5px;
 }
@@ -164,7 +166,7 @@ body {
   width: 200px;
   border: 1px solid #ddd;
   padding: 10px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   text-align: center;
 }
 
@@ -180,7 +182,7 @@ body {
 }
 
 .card {
-  max-width: 9.375rem; 
+  max-width: 18.75rem; /* Təxminən 300px */
   width: 100%;
   border: 1px solid #ddd;
   border-radius: 10px;
@@ -189,92 +191,109 @@ body {
   text-align: center;
   background-color: #fff;
   position: relative;
-  margin: 10px;
-
-  
+  margin: 20px;
 }
-.content-car{
+
+.content-car {
   display: grid;
- grid-template-columns: auto auto auto;
- width: 80%;
- margin: 20px auto;
-justify-content: center; 
-grid-gap: 30px;
+  grid-template-columns: repeat(auto-fit, minmax(18.75rem, 1fr)); /* Kartların avtomatik uyğunlaşması */
+  width: 100%;
+  margin: 20px auto;
+  justify-content: center;
+  grid-gap: 20px; /* Kartlar arası məsafə */
 }
 
 .card img {
   width: 100%;
-  height: auto;
+  height: 12.5rem; /* Təxminən 200px */
+  object-fit: cover;
 }
 
 .card-body {
-  padding: 10px; 
+  padding: 15px;
 }
 
 .card-body h5 {
-  margin: 0 0 5px; 
-  font-size: 14px; 
+  margin: 0 0 10px;
+  font-size: 16px;
   font-weight: bold;
 }
 
 .card-body p {
-  margin: 3px 0; 
-  font-size: 12px; 
+  margin: 5px 0;
+  font-size: 14px;
 }
 
 .card-footer {
   background-color: #f7f7f7;
-  padding: 5px; 
+  padding: 10px;
   text-align: center;
-  font-size: 12px; 
+  font-size: 14px;
 }
 
 .card-footer .price {
-  font-size: 16px; 
+  font-size: 18px;
   font-weight: bold;
   color: #d32f2f;
 }
 
 .card-footer .details {
-  font-size: 10px; 
+  font-size: 12px;
   color: #777;
 }
 
-
 .card .badge {
   position: absolute;
-  top: 5px; 
-  left: 5px; 
+  top: 5px;
+  left: 5px;
   background-color: #007bff;
   color: #fff;
-  padding: 3px 5px; 
+  padding: 5px 10px;
   border-radius: 5px;
-  font-size: 10px; 
+  font-size: 12px;
 }
 
 .card .icon {
   position: absolute;
   top: 5px;
   right: 5px;
-  font-size: 10px;
+  font-size: 14px;
   background: none;
-  border-radius: 11px 0;
+  border-radius: 50%;
   cursor: pointer;
   background: radial-gradient(black, transparent);
 }
 
 .card .icon .fa-heart {
-  color: white; 
+  color: white;
 }
 
 .card .icon.active .fa-heart {
-  color: red; 
+  color: red;
 }
 
-.card .crown {
-  position: absolute;
-  bottom: 5px; 
-  right: 5px; 
-  font-size: 14px; 
-  color: orange;
+.details {
+  display: inline-block;
+  background-color: #FFD700; /* Qızılı rəng */
+  color: #fff; /* Ağ mətn */
+  padding: 5px 10px;
+  border-radius: 12px; /* Yuvarlaq kənarlar */
+  font-size: 14px;
+  font-weight: bold;
+  text-transform: uppercase;
+  position: absolute; /* Şəkil üzərində yerləşməsi üçün */
+  top: -323px;
+  right: 40px;
+  z-index: 10; /* Digər elementlərin üzərində göstərmək üçün */
+}
+
+.vip .details {
+  background-color: #FFD700; /* VIP üçün qızılı rəng */
+  color: #fff; /* Ağ mətn */
+}
+
+/* VIP ilanlar üçün xüsusi stil */
+.vip {
+  border: 2px solid gold;
+  box-shadow: 0 0 10px rgb(255, 0, 0);
 }
