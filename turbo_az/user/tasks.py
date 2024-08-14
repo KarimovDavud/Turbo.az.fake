@@ -5,6 +5,9 @@ from django.conf import settings
 from celery import shared_task
 from django.contrib.auth.models import User
 from .models import Car, ImageCar
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
+
 
 def save_base64_image(data, filename):
     """
@@ -27,25 +30,25 @@ def create_car_task(user_id, form_data, file_data_list):
     user = User.objects.get(id=user_id)
     car = Car.objects.create(
         user=user,
-        brand_id=form_data['brand_id'],
-        car_models_id=form_data['car_models_id'],
-        new_bord_id=form_data['new_bord_id'],
+        brand=form_data['brand'],
+        car_models=form_data['car_models'],
+        new_bord=form_data['new_bord'],
         mileage=form_data['mileage'],
-        mileage_unit_id=form_data['mileage_unit_id'],
-        color_id=form_data['color_id'],
+        mileage_unit=form_data['mileage_unit'],
+        color=form_data['color'],
         price=form_data['price'],
-        price_currency_id=form_data['price_currency_id'],
-        owner_number_id=form_data['owner_number_id'],
-        fuel_type_id=form_data['fuel_type_id'],
-        transmission_id=form_data['transmission_id'],
-        year_id=form_data['year_id'],
+        price_currency=form_data['price_currency'],
+        owner_number=form_data['owner_number'],
+        fuel_type_id=form_data['fuel_type'],
+        transmission=form_data['transmission'],
+        year_id=form_data['year'],
         engine_capasity=form_data['engine_capasity'],
         engine_power=form_data['engine_power'],
-        collected_for_which_market_id=form_data['collected_for_which_market_id'],
+        collected_for_which_market=form_data['collected_for_which_market_'],
         damage_have=form_data['damage_have'],
         painted=form_data['painted'],
         for_accident_or_spare_parts=form_data['for_accident_or_spare_parts'],
-        seat_count_id=form_data['seat_count_id'],
+        seat_count=form_data['seat_count_'],
         credit_available=form_data['credit_available'],
         barter_available=form_data['barter_available'],
         vin_number=form_data['vin_number'],
@@ -64,11 +67,11 @@ def create_car_task(user_id, form_data, file_data_list):
         side_curtains=form_data['side_curtains'],
         rain_sensor=form_data['rain_sensor'],
         contact_name=form_data['contact_name'],
-        city_id=form_data['city_id'],
+        city_id=form_data['city'],
         email=form_data['email'],
         phone_number=form_data['phone_number'],
-        transmission_type_id=form_data['transmission_type_id'],
-        car_status_id=form_data['car_status_id'],
+        transmission_type=form_data['transmission_type'],
+        car_status=form_data['car_status'],
         is_approved=form_data['is_approved']
     )
 
@@ -77,3 +80,19 @@ def create_car_task(user_id, form_data, file_data_list):
         filename = f"{user.username}_{car.id}_{idx}"
         file_path = save_base64_image(file_data, filename)
         ImageCar.objects.create(car=car, image=file_path)
+
+
+@shared_task
+def send_registration_email(username, email):
+    subject = 'Qeydiyyatınız tamamlandı'
+    recipient_list = [email]
+    customer_message = render_to_string('user/register_email.html', {'username': username})
+
+    send_mail(
+        subject,
+        '',
+        'rzazadfrid@gmail.com',
+        recipient_list,
+        fail_silently=False,
+        html_message=customer_message,
+    )

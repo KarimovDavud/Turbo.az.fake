@@ -164,6 +164,14 @@ class Car(models.Model):
     car_status = models.ForeignKey(CarStatus, on_delete=models.CASCADE, null=True, verbose_name='Status')
     is_approved = models.BooleanField(default=False, verbose_name='Təsdiq')
     is_vip = models.BooleanField(default=False, verbose_name='Vip')
+    created_at = models.DateField(auto_now_add=True, null=True, blank=True, verbose_name='Yaradılma vaxtı')
+    view_count = models.PositiveIntegerField(default=0, verbose_name='Baxış sayı')
+
+
+
+    def increment_view_count(self):
+        self.view_count += 1
+        self.save()
 
     def __str__(self):
         return f"{self.brand} {self.car_models} - {self.price}"

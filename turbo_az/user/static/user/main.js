@@ -52,3 +52,25 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 const saveToLocal = (item, itemName) => localStorage.setItem(itemName, JSON.stringify(item)) 
+
+const myText = document.querySelector('.myText');
+const btn = document.querySelector('.btns');
+
+function showBtn() {
+    if (myText.classList.contains('show')) {
+        myText.classList.remove('show');
+        setTimeout(() => {
+            myText.style.display = 'none';
+        }, 300); 
+        btn.textContent = 'Show';
+    } else {
+        myText.style.display = 'block';
+        setTimeout(() => {
+            myText.classList.add('show');
+        }, 20); 
+        btn.textContent = 'Hide';
+    }
+    console.log('salam');
+}
+
+btn.addEventListener('click', showBtn);

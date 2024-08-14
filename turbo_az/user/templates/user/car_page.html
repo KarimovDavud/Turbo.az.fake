@@ -34,15 +34,16 @@
                     <span>AZN</span>
                 </div>
                 <div class="contact-info">
+                    Telefon nömrəsi:
                     <p>{{ car.phone_number }}</p>
                 </div>
                 <div class="description">
                     <p>Qİymətlərə ƏDV daxildir</p>
-                    <p>Avtosalon "040 Cars" yeni və ikinci əl Toyota avtomobillərinin nağd və köçürmə yolu ilə, ƏDV daxil və xaric, sərfəli kredit və lizing şərtləri ilə satışını həyata keçirir.</p>
+                    <p>{{ car.additional_info }}</p>
                 </div>
                 <div class="additional-info">
-                    <p>Yeniləndi: 25.07.2024</p>
-                    <p>Baxışların sayı: 24600</p>
+                    <p>Yeniləndi: {{ car.created_at }}</p>
+                    <p>Baxış sayı: {{ car.view_count }}</p>
                 </div>
                 <table class="specifications">
                     <tr>
@@ -86,6 +87,10 @@
                         <td>{{ car.engine_capasity }}L / {{ car.engine_power }} a.g./ {{ car.fuel_type }}</td>
                         <td>Hansı bazar üçün</td>
                         <td>{{ car.collected_for_which_market }}</td>
+                    </tr>
+                    <tr>
+                        <td>Sahibi</td>
+                        <td>{{ car.user }}</td>
                     </tr>
                     <tr>
                         <td>Yürüş</td>
