@@ -1,0 +1,37 @@
+Metadata-Version: 2.1
+Name: Roman-Numerals-Simple
+Version: 1.0.1
+Summary: Library for interacting with roman numerals
+Home-page: https://github.com/gaming32/roman-numerals
+Author: Gaming32
+Author-email: gaming32i64@gmail.com
+License: License :: OSI Approved :: MIT License
+Platform: UNKNOWN
+Description-Content-Type: text/markdown
+
+# Installing
+``` shell
+$ python3 -m pip install Roman-Numerals-Simple
+```
+
+# Using
+``` python
+>>> import roman
+>>> roman.int_to_roman(947)
+'CMXLVII'
+>>> roman.roman_to_int('CMXLVII')
+947
+```
+
+# Command Line
+``` shell
+$ python3 -m roman
+5377
+MMMMMCCCLXXVII
+5377 True
+$ python3 -m roman 947
+947
+CMXLVII
+947 True
+```
+

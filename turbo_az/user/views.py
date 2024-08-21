@@ -277,9 +277,9 @@ def home(request):
         cleaned_data = form.cleaned_data
 
         if cleaned_data.get('brand'):
-            filters['brand__name'] = cleaned_data['brand']
+            filters['brand'] = cleaned_data['brand']
         if cleaned_data.get('model'):
-            filters['car_models__name'] = cleaned_data['model']
+            filters['car_models'] = cleaned_data['model']
         if cleaned_data.get('min_price'):
             filters['price__gte'] = cleaned_data['min_price']
         if cleaned_data.get('max_price'):
