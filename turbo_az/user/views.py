@@ -347,7 +347,7 @@ def home(request):
             'user_cars': user_cars,
             'profile': profile,
         })
-    return render(request, 'user/home.html', context)
+    return render(request, 'user/index.html', context)
 
 
 def login_register(request):
