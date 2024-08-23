@@ -1,4 +1,5 @@
 import base64
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from .models import Car
@@ -19,6 +20,7 @@ from django.contrib import messages
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import viewsets
+from dal import autocomplete
 from .forms import *
 from .serializers import *
 from django.shortcuts import get_object_or_404
@@ -341,7 +343,7 @@ def home(request):
             'user_cars': user_cars,
             'profile': profile,
         })
-    return render(request, 'user/index.html', context)
+    return render(request, 'user/home.html', context)
 
 
 def login_register(request):
@@ -428,6 +430,8 @@ class CarViewSet(viewsets.ModelViewSet):
 class CarListView(generics.ListCreateAPIView):
     queryset = Car.objects.all()
     serializer_class = CarSerializer
+
+
 
 
 

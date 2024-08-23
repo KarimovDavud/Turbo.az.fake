@@ -28,139 +28,139 @@ msgstr "Азербайджанский"
 msgid "Russian"
 msgstr "Русский"
 
-#: user/templates/user/index.html:9
+#: user/templates/user/home.html:9
 msgid "Avtomobil Siyahısı"
 msgstr ""
 
-#: user/templates/user/index.html:49
+#: user/templates/user/home.html:49
 msgid "Dəstək: (012) 505-77-55"
 msgstr "Поддержка: (012) 505-77-55"
 
-#: user/templates/user/index.html:50
+#: user/templates/user/home.html:50
 msgid "Yardım"
 msgstr "Помощь"
 
-#: user/templates/user/index.html:63
+#: user/templates/user/home.html:63
 msgid "Seçilmişlər"
 msgstr "Избранные"
 
-#: user/templates/user/index.html:68
+#: user/templates/user/home.html:68
 msgid "Çıxış"
 msgstr "Выход"
 
-#: user/templates/user/index.html:70
+#: user/templates/user/home.html:70
 msgid "Profile"
 msgstr "Профиль"
 
-#: user/templates/user/index.html:73
+#: user/templates/user/home.html:73
 msgid "Giriş"
 msgstr "Вход"
 
-#: user/templates/user/index.html:85
+#: user/templates/user/home.html:85
 msgid "Ana səhifə"
 msgstr "Главная страница"
 
-#: user/templates/user/index.html:86
+#: user/templates/user/home.html:86
 msgid "Bütün elanlar"
 msgstr "Все объявления"
 
-#: user/templates/user/index.html:87
+#: user/templates/user/home.html:87
 msgid "Salonlar"
 msgstr "Салоны"
 
-#: user/templates/user/index.html:88
+#: user/templates/user/home.html:88
 msgid "Moto"
 msgstr "Мото"
 
-#: user/templates/user/index.html:89
+#: user/templates/user/home.html:89
 msgid "Ehtiyat hissələri və aksesuarlar"
 msgstr "Запчасти и аксессуары"
 
-#: user/templates/user/index.html:90
+#: user/templates/user/home.html:90
 msgid "İcarə"
 msgstr "Аренда"
 
-#: user/templates/user/index.html:95
+#: user/templates/user/home.html:95
 msgid "Yeni elan"
 msgstr "Новое объявление"
 
-#: user/templates/user/index.html:109
+#: user/templates/user/home.html:109
 msgid "Marka"
 msgstr "Марка"
 
-#: user/templates/user/index.html:110
+#: user/templates/user/home.html:110
 msgid "Model"
 msgstr "Модель"
 
-#: user/templates/user/index.html:113
+#: user/templates/user/home.html:113
 msgid "Minimum Price"
 msgstr "Минимальная цена"
 
-#: user/templates/user/index.html:114
+#: user/templates/user/home.html:114
 msgid "Maximum Price"
 msgstr "Максимальная цена"
 
-#: user/templates/user/index.html:120
+#: user/templates/user/home.html:120
 msgid "Minimum Engine Capacity"
 msgstr "Минимальная мощность двигателя"
 
-#: user/templates/user/index.html:121
+#: user/templates/user/home.html:121
 msgid "Maximum Engine Capacity"
 msgstr "Максимальная мощность двигателя"
 
-#: user/templates/user/index.html:122
+#: user/templates/user/home.html:122
 msgid "Minimum Power"
 msgstr "Минимальная мощность"
 
-#: user/templates/user/index.html:123
+#: user/templates/user/home.html:123
 msgid "Maximum Power"
 msgstr "Максимальная мощность"
 
-#: user/templates/user/index.html:126
+#: user/templates/user/home.html:126
 msgid "Minimum Mileage"
 msgstr "Минимальный пробег"
 
-#: user/templates/user/index.html:127
+#: user/templates/user/home.html:127
 msgid "Maximum Mileage"
 msgstr "Максимальный пробег"
 
-#: user/templates/user/index.html:128
+#: user/templates/user/home.html:128
 msgid "Mileage Unit"
 msgstr "Единица измерения пробега"
 
-#: user/templates/user/index.html:134
+#: user/templates/user/home.html:134
 msgid "Owner Count"
 msgstr "Количество владельцев"
 
-#: user/templates/user/index.html:135
+#: user/templates/user/home.html:135
 msgid "Seat Count"
 msgstr "Количество мест"
 
-#: user/templates/user/index.html:136
+#: user/templates/user/home.html:136
 msgid "Market"
 msgstr "Рынок"
 
-#: user/templates/user/index.html:137
+#: user/templates/user/home.html:137
 msgid "Car Status"
 msgstr "Состояние автомобиля"
 
-#: user/templates/user/index.html:163
+#: user/templates/user/home.html:163
 msgid "Minimum Year"
 msgstr "Минимальный год"
 
-#: user/templates/user/index.html:164
+#: user/templates/user/home.html:164
 msgid "Maximum Year"
 msgstr "Максимальный год"
 
-#: user/templates/user/index.html:165
+#: user/templates/user/home.html:165
 msgid "City"
 msgstr "Город"
 
-#: user/templates/user/index.html:173
+#: user/templates/user/home.html:173
 msgid "Elanları göstər"
 msgstr "Показать объявления"
 
-#: user/templates/user/index.html:174
+#: user/templates/user/home.html:174
 msgid "Sıfırla"
 msgstr "Сбросить"
 

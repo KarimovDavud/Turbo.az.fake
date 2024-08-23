@@ -1,0 +1,223 @@
+{% load static %}
+{% load i18n %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% trans "Avtomobil Siyahısı" %}</title>
+    <link rel="stylesheet" href="{% static 'user/home.css' %}">
+    <link rel="stylesheet" href="{% static 'user/create_car.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+        integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <style>
+        .myText {
+            opacity: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: opacity 0.5s, max-height 0.5s;
+            display: none; /* Initially hidden */
+        }
+        .show {
+            opacity: 1;
+            max-height: 200vh; 
+            overflow: hidden; 
+            padding: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="head-info">
+            <div class="container">
+                <div class="row">
+                    <ul class="d-flex">
+                        <li><a href="https://tap.az/">Tap.az</a></li>
+                        <li><a href="https://bina.az/">Bina.az</a></li>
+                        <li><a href="https://boss.az/">Boss.az</a></li>
+                    </ul>
+                    <ul class="d-flex">
+                        <span>{% trans "Dəstək: (012) 505-77-55" %}</span>
+                        <li><a href="">{% trans "Yardım" %}</a></li>
+                        <li>
+                            <!-- Dil seçimi forması -->
+                            <form action="{% url 'set_language' %}" method="post" style="display: inline;">
+                                {% csrf_token %}
+                                <input type="hidden" name="next" value="{{ request.path }}">
+                                <div class="language-switcher">
+                                    <button type="submit" name="language" value="az" class="{% if request.LANGUAGE_CODE == 'az' %}active{% endif %}">
+                                        az
+                                    </button>
+                                    <button type="submit" name="language" value="ru" class="{% if request.LANGUAGE_CODE == 'ru' %}active{% endif %}">
+                                        ru
+                                    </button>
+                                    <!-- Add more buttons for other languages here -->
+                                </div>
+                            </form>
+                        </li>
+                        <li><a href="{% url 'like_page' %}"><i class="fa-solid fa-heart"></i> {% trans "Seçilmişlər" %}</a></li>
+                        {% if user.is_authenticated %}
+                        <li>
+                            <form method="post" action="{% url 'logout' %}" style="display: inline;">
+                                {% csrf_token %}
+                                <button type="submit"><i class="fa-solid fa-circle-user"></i> {% trans "Çıxış" %}</button>
+                            </form>
+                            <li><a href="{% url 'user_profile' %}">{% trans "Profile" %}</a></li>
+                        </li>
+                        {% else %}
+                        <li><a href="{% url 'login_register' %}"><i class="fa-solid fa-circle-user"></i> {% trans "Giriş" %}</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="web-navbar">
+            <div class="container">
+                <div class="row">
+                    <div class="nav-1 d-flex g-5">
+                        <ul class="d-flex">
+                            <li><a href="{% url 'home' %}">{% trans "Ana səhifə" %}</a></li>
+                            <li><a href="{% url 'home' %}">{% trans "Bütün elanlar" %}</a></li>
+                            <li><a href="{% url 'salons' %}">{% trans "Salonlar" %}</a></li>
+                            <li><a href="">{% trans "Moto" %}</a></li>
+                            <li><a href="">{% trans "Ehtiyat hissələri və aksesuarlar" %}</a></li>
+                            <li><a href="">{% trans "İcarə" %}</a></li>
+                        </ul>
+                    </div>
+                    <div class="nav-2">
+                        <div class="btn">
+                            <a href="{% url 'create_car' %}"><span><i class="fa-solid fa-circle-plus"></i></span>{% trans "Yeni elan" %}</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <div class="container">
+        <!-- Filtr Formu -->
+        <form method="get" action="{% url 'home' %}" class="filter-form">
+
+            
+            <div class="filter-group">
+                <label for="id_brand">{% trans "Marka" %}</label> {{ form.brand }}
+                <label for="id_model">{% trans "Model" %}</label> {{ form.model }}
+            </div>
+            <div class="filter-group">
+                {% trans "Minimum Price" %}: {{ form.min_price }}
+                {% trans "Maximum Price" %}: {{ form.max_price }}
+            </div>
+            
+            <div class="filter-group">
+                <div class="content" style="display: flex; gap: 22px;">
+                    <div class="item-1">
+                        {% trans "Minimum Engine Capacity" %} {{ form.min_engine_capasity }}
+                        {% trans "Maximum Engine Capacity" %} {{ form.max_engine_capasity }}
+                        {% trans "Minimum Power" %} {{ form.min_power }}
+                        {% trans "Maximum Power" %} {{ form.max_power }}
+                    </div>
+                    <div class="item-2">
+                        {% trans "Minimum Mileage" %}: {{ form.min_mileage }}
+                        {% trans "Maximum Mileage" %}: {{ form.max_mileage }}
+                        {% trans "Mileage Unit" %}: {{ form.MILEAGE_UNIT }}
+                    </div>
+                </div>
+            </div>
+            <div class="filter-group">
+                <div class="content">
+                    {% trans "Owner Count" %}: {{ form.OWNER_COUNT }}
+                    {% trans "Seat Count" %}: {{ form.SEAT_COUNT }}
+                    {% trans "Market" %}: {{ form.MARKET }}
+                    {% trans "Car Status" %}: {{ form.CAR_STATUS }}
+                </div>
+            </div>            
+            <div class="filter-group">
+                {{ form.no_damage.label_tag }} {{ form.no_damage }}
+                {{ form.no_paint.label_tag }} {{ form.no_paint }}
+                {{ form.accident_only.label_tag }} {{ form.accident_only }}
+            </div>
+            <div class="filter-group">
+                
+                {{ form.alloy_wheels.label_tag }} {{ form.alloy_wheels }}
+                
+                {{ form.abs.label_tag }} {{ form.abs }}
+                {{ form.sunroof.label_tag }} {{ form.sunroof }}
+                {{ form.rain_sensor.label_tag }} {{ form.rain_sensor }}
+                {{ form.central_locking.label_tag }} {{ form.central_locking }}
+                {{ form.park_sensors.label_tag }} {{ form.park_sensors }}
+                {{ form.air_conditioning.label_tag }} {{ form.air_conditioning }}
+                {{ form.seat_heating.label_tag }} {{ form.seat_heating }}
+                {{ form.leather_seats.label_tag }} {{ form.leather_seats }}
+                {{ form.xenon_lights.label_tag }} {{ form.xenon_lights }}
+                {{ form.rear_camera.label_tag }} {{ form.rear_camera }}
+                {{ form.side_airbags.label_tag }} {{ form.side_airbags }}
+                {{ form.ventilated_seats.label_tag }} {{ form.ventilated_seats }}
+            </div>
+            <div class="filter-group">
+                {% trans "Minimum Year" %} {{ form.min_year }}
+                {% trans "Maximum Year" %} {{ form.max_year }}
+                {% trans "City" %} {{ form.CITY }}
+            </div>
+                </div>  
+
+                </div>               
+              </div>
+           
+              <div class="bottom-section">
+                <button type="submit" class="submit-button">{% trans "Elanları göstər" %}</button>
+                <button type="reset" class="reset-button">{% trans "Sıfırla" %}</button>        
+            </div>
+        </form>
+        <!-- Avtomobil Siyahısı -->
+        <div class="car-list">
+            <div class="content-car">
+                {% for car in cars %}
+                <div class="card {% if car.is_vip %}vip{% endif %}" id="{{ car.id }}">
+                    <button class="icon" id="heart-icon" data-car-id="{{ car.id }}">
+                        <i class="fas fa-heart"></i>
+                    </button>
+                    <a href="{% url 'car_page' car.id %}">
+                        <img class="car-img" src="{{ car.front_view_image.url }}" alt="Car Image">
+                        <div class="badge">{{ car.brand }}</div>
+                        <div class="card-body">
+                            <h5 class="car-model">{{ car.car_models }}</h5>
+                            <p class="car-info">{{ car.year }}, {{ car.engine_capasity }} L, {{ car.mileage }} {{ car.mileage_unit }}</p>
+                            <p class="car-location">{{ car.city }}, {{ car.created_at }}</p>
+                        </div>
+                        <div class="card-footer">
+                            <span class="price">{{ car.price }} {{ car.price_currency }}</span>
+                            {% if car.is_vip %}
+                            <span class="details">VIP</span>
+                            {% endif %}
+
+                        </div>
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <!-- Footer məlumatları -->
+    </footer>
+   
+    <script>
+        document.querySelector('.reset-button').addEventListener('click', function() {
+            window.location.href = window.location.pathname;
+        });
+    </script>
+
+    <script src="{% static 'user/main.js' %}"></script>
+</body>
+</html>
