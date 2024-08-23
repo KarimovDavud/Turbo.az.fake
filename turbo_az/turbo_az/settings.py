@@ -29,8 +29,6 @@ INSTALLED_APPS = [
     'user',
     'salons',
     'rest_framework',
-    'dal',
-    'dal_select2',
     'celery',
     'redis',
 ]

@@ -31,7 +31,6 @@ urlpatterns = [
     path('edit_car/<int:car_id>/', views.edit_car, name='edit_car'), 
     path('delete_car/<int:car_id>/', views.delete_car, name='delete_car'),
     path('api', include(router.urls)),
-    path('car-model-autocomplete/', CarModelAutocomplete.as_view(), name='car-model-autocomplete'),
     path('', views.home, name='home'),
     path('salon/', views.salons, name='salons'),
     path('favicon.ico/', RedirectView.as_view(url='/static/favicon.ico')),

@@ -1,7 +1,4 @@
 import base64
-
-
-
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from .models import Car
@@ -22,7 +19,6 @@ from django.contrib import messages
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import viewsets
-from dal import autocomplete
 from .forms import *
 from .serializers import *
 from django.shortcuts import get_object_or_404
@@ -433,19 +429,6 @@ class CarListView(generics.ListCreateAPIView):
     queryset = Car.objects.all()
     serializer_class = CarSerializer
 
-
-class CarModelAutocomplete(autocomplete.Select2QuerySetView):
-    def get_queryset(self):
-        if not self.request.user.is_authenticated:
-            return CarModel.objects.none()
-
-        qs = CarModel.objects.all()
-
-        brand_id = self.forwarded.get('brand', None)
-        if brand_id:
-            qs = qs.filter(brand_id=brand_id)
-
-        return qs
 
 
 def like_page(request):
