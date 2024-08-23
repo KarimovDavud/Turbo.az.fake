@@ -1,12 +1,10 @@
 import base64
-import paypalrestsdk
 
 
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from .models import Car
-from .paypal_config import paypalrestsdk
 from user.tasks import send_registration_email  
 from django.conf import settings
 from django.utils.html import strip_tags
@@ -455,58 +453,3 @@ def like_page(request):
 
 
 
-
-def create_payment(request, car_id):
-    car = get_object_or_404(Car, id=car_id)
-
-    payment = paypalrestsdk.Payment({
-        "intent": "sale",
-        "payer": {
-            "payment_method": "paypal"
-        },
-        "redirect_urls": {
-            "return_url": request.build_absolute_uri(reverse('execute_payment', args=[car.id])),
-            "cancel_url": request.build_absolute_uri(reverse('cancel_payment'))
-        },
-        "transactions": [{
-            "item_list": {
-                "items": [{
-                    "name": f"VIP Ad for {car.brand} {car.car_models}",
-                    "sku": "vip_ad",
-                    "price": "10.00",
-                    "currency": "USD",
-                    "quantity": 1
-                }]
-            },
-            "amount": {
-                "total": "10.00",
-                "currency": "USD"
-            },
-            "description": f"VIP Ad for {car.brand} {car.car_models} for 30 days."
-        }]
-    })
-
-    if payment.create():
-        for link in payment.links:
-            if link.rel == "approval_url":
-                approval_url = link.href
-                return redirect(approval_url)
-    else:
-        return render(request, 'user/payment_error.html', {'error': payment.error})
-
-def execute_payment(request, car_id):
-    payment_id = request.GET.get('paymentId')
-    payer_id = request.GET.get('PayerID')
-
-    payment = paypalrestsdk.Payment.find(payment_id)
-
-    if payment.execute({"payer_id": payer_id}):
-        car = get_object_or_404(Car, id=car_id)
-        car.is_vip = True
-        car.save()
-        return render(request, 'user/payment_success.html', {'car': car})
-    else:
-        return render(request, 'user/payment_error.html', {'error': payment.error})
-
-def cancel_payment(request):
-    return render(request, 'user/payment_cancelled.html')

@@ -45,8 +45,5 @@ urlpatterns = [
     path('profile/', user_profile, name='user_profile'),
     path('profile/edit/', edit_profile, name='edit_profile'),
     path('profile/delete/', delete_profile, name='delete_profile'),
-    path('create_payment/<int:car_id>/', views.create_payment, name='create_payment'),
-    path('execute_payment/<int:car_id>/', views.execute_payment, name='execute_payment'),
-    path('cancel_payment/', views.cancel_payment, name='cancel_payment'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
