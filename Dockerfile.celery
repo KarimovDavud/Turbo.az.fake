@@ -20,4 +20,4 @@ RUN \
 COPY . ./turbo_az
 
 
-CMD ["celery", "-A", "turbo_az", "worker", "--loglevel=INFO"]
+CMD ["celery", "-A", "turbo_az.celery", "worker", "--loglevel=INFO"]
