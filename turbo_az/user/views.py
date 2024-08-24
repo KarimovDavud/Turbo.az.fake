@@ -20,7 +20,6 @@ from django.contrib import messages
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import viewsets
-from dal import autocomplete
 from .forms import *
 from .serializers import *
 from django.shortcuts import get_object_or_404
